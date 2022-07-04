@@ -1,10 +1,13 @@
 ["protostar.config"]
-protostar_version = "0.2.4"
+protostar_version = "0.2.5"
 
 ["protostar.project"]
 libs_path = "lib"
 
 ["protostar.contracts"]
-main = [
-    "src/main.cairo",
+strategy_manager = [
+    "src/strategy_manager.cairo",
+]
+player_strategy = [
+    "src/player_strategy.cairo",
 ]
