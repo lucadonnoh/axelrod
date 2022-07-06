@@ -21,6 +21,12 @@ struct Score:
     member player2_score : felt
 end
 
+struct Match:
+    member player1 : felt
+    member player2 : felt
+    member score : Score
+end
+
 @contract_interface
 namespace IPlayerStrategy:
     func execute_strategy(
@@ -65,6 +71,14 @@ end
 
 @storage_var
 func points(tournament_id : felt, player_id : felt) -> (points : felt):
+end
+
+@storage_var
+func match(tournament_id : felt, match_id : felt) -> (match : Match):
+end
+
+@storage_var
+func matches_len(tournament_id : felt) -> (len : felt):
 end
 
 @constructor
@@ -193,6 +207,16 @@ func _recursive_play{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
 
     let (score) = play_vs(tournament_id, strat1, strat2, NUM_ROUNDS)
 
+    let (curr_match_id) = matches_len.read(tournament_id)
+    let match_id = curr_match_id + 1
+    matches_len.write(tournament_id, match_id)
+
+    let (player1_address) = player_id_to_address.read(tournament_id, player1_id)
+    let (player2_address) = player_id_to_address.read(tournament_id, player2_id)
+
+    let m = Match(player1_address, player2_address, score)
+    match.write(tournament_id, match_id, m)
+
     let new_points1 = old_points1 + score.player1_score
     let new_points2 = old_points2 + score.player2_score
 
@@ -215,6 +239,7 @@ func play_vs{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     let scores = Score(0,0)
     let (moves : Move*) = alloc()
     let (score_final) = _recurse_play_vs(tournament_id, strategy1_address, strategy2_address, num_rounds, 0, moves, 0, scores)
+
     return (score_final)
 end
 
