@@ -38,6 +38,43 @@ func test_ten_rounds{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBu
     return ()
 end
 
+@external 
+func test_tit_tat{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
+    alloc_locals
+    
+    local strat_one : felt
+    local strat_two : felt
+
+    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/player_strategy_tit_tat.cairo").contract_address%}
+
+    let score : Score = play_vs(strat_one, strat_two, 10)
+
+    assert 20 = score.player1_score
+    assert 20 = score.player2_score
+
+    return ()
+end
+
+@external 
+func test_tit_tat_100_rounds{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
+    alloc_locals
+    
+    local strat_one : felt
+    local strat_two : felt
+
+    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/player_strategy_tit_tat.cairo").contract_address%}
+
+    let score : Score = play_vs(strat_one, strat_two, 100)
+
+    assert 200 = score.player1_score
+    assert 200 = score.player2_score
+
+    return ()
+end
+
+
 @external
 func test_register_and_play_with_two_strats{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
     alloc_locals
