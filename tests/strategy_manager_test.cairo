@@ -52,7 +52,9 @@ func test_tit_tat{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuilt
     %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
     %{ids.strat_two = deploy_contract("./src/player_strategy_tit_tat.cairo").contract_address%}
 
-    let score : Score = play_vs(strat_one, strat_two, 10)
+    let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
+
+    let score : Score = play_vs(tournament_id, strat_one, strat_two, 10)
 
     assert 20 = score.player1_score
     assert 20 = score.player2_score
@@ -70,7 +72,9 @@ func test_tit_tat_100_rounds{syscall_ptr : felt*, range_check_ptr, pedersen_ptr 
     %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
     %{ids.strat_two = deploy_contract("./src/player_strategy_tit_tat.cairo").contract_address%}
 
-    let score : Score = play_vs(strat_one, strat_two, 100)
+    let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
+
+    let score : Score = play_vs(tournament_id, strat_one, strat_two, 100)
 
     assert 200 = score.player1_score
     assert 200 = score.player2_score

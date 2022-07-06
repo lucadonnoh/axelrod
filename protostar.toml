@@ -8,6 +8,12 @@ libs_path = "lib"
 strategy_manager = [
     "src/strategy_manager.cairo",
 ]
-player_strategy = [
-    "src/player_strategy.cairo",
+player_strategy_one = [
+    "src/player_strategy_one.cairo",
+]
+player_strategy_two = [
+    "src/player_strategy_two.cairo",
+]
+player_strategy_tit_tat = [
+    "src/player_strategy_tit_tat.cairo",
 ]
