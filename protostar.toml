@@ -8,6 +8,12 @@ libs_path = "lib"
 strategy_manager = [
     "src/strategy_manager.cairo",
 ]
-player_strategy = [
-    "src/player_strategy.cairo",
+Cooperator = [
+    "src/Cooperator.cairo",
+]
+Defector = [
+    "src/Defector.cairo",
+]
+Tit4Tat = [
+    "src/Tit4Tat.cairo",
 ]

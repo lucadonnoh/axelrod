@@ -17,5 +17,15 @@ func execute_strategy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_ch
     move_num:felt,
     player_num:felt, 
 ) -> (strategy: felt):
-    return (COOPERATE)
+    #Move Number Starts at 0
+    if move_num == 0:
+        return (COOPERATE)
+    end
+
+    if player_num==1:
+        return (prev_moves[move_num-1].player2_move)
+    else:
+        return (prev_moves[move_num-1].player1_move)
+    end
+
 end

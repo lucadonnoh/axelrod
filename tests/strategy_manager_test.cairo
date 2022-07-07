@@ -1,7 +1,7 @@
 %lang starknet
 from src.strategy_manager import play_one_round_vs, play_vs, Score, play, register_strategy, get_player_id, get_player_address, get_player_points, create_tournament, match, matches_len, registered_players_len
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.starknet.common.syscalls import (get_caller_address)
+from starkware.starknet.common.syscalls import (get_caller_address) 
 
 @external
 func test_one_round{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
@@ -10,8 +10,8 @@ func test_one_round{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBui
     local strat_one : felt
     local strat_two : felt
 
-    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
-    %{ids.strat_two = deploy_contract("./src/player_strategy_two.cairo").contract_address%}
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Defector.cairo").contract_address%}
 
     let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
 
@@ -29,8 +29,8 @@ func test_ten_rounds{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBu
     local strat_one : felt
     local strat_two : felt
 
-    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
-    %{ids.strat_two = deploy_contract("./src/player_strategy_two.cairo").contract_address%}
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Defector.cairo").contract_address%}
 
     let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
 
@@ -42,6 +42,47 @@ func test_ten_rounds{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBu
     return ()
 end
 
+@external 
+func test_tit_tat{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
+    alloc_locals
+    
+    local strat_one : felt
+    local strat_two : felt
+
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Tit4Tat.cairo").contract_address%}
+
+    let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
+
+    let score : Score = play_vs(tournament_id, strat_one, strat_two, 10)
+
+    assert 20 = score.player1_score
+    assert 20 = score.player2_score
+
+    return ()
+end
+
+@external 
+func test_tit_tat_100_rounds{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
+    alloc_locals
+    
+    local strat_one : felt
+    local strat_two : felt
+
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Tit4Tat.cairo").contract_address%}
+
+    let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
+
+    let score : Score = play_vs(tournament_id, strat_one, strat_two, 100)
+
+    assert 200 = score.player1_score
+    assert 200 = score.player2_score
+
+    return ()
+end
+
+
 @external
 func test_register_and_play_with_two_strats{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
     alloc_locals
@@ -49,8 +90,8 @@ func test_register_and_play_with_two_strats{syscall_ptr : felt*, range_check_ptr
     local strat_one : felt
     local strat_two : felt
 
-    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
-    %{ids.strat_two = deploy_contract("./src/player_strategy_two.cairo").contract_address%}
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Defector.cairo").contract_address%}
 
     let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
 
@@ -112,9 +153,9 @@ func test_register_and_play_with_three_strats{syscall_ptr : felt*, range_check_p
     local strat_two : felt
     local strat_three : felt
 
-    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
-    %{ids.strat_two = deploy_contract("./src/player_strategy_two.cairo").contract_address%}
-    %{ids.strat_three = deploy_contract("./src/player_strategy_two.cairo").contract_address%}
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Defector.cairo").contract_address%}
+    %{ids.strat_three = deploy_contract("./src/Defector.cairo").contract_address%}
 
     let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
 
@@ -149,7 +190,7 @@ func test_failing_create_strategy_for_uninitialized_tournament{syscall_ptr : fel
     
     local strat_one : felt
 
-    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
 
     %{ expect_revert(error_message="The tournament is not active") %}
     let (player_id) = register_strategy(1, strat_one)
@@ -173,8 +214,8 @@ func test_two_tournaments{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : H
     local strat_one : felt
     local strat_two : felt
 
-    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
-    %{ids.strat_two = deploy_contract("./src/player_strategy_two.cairo").contract_address%}
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Defector.cairo").contract_address%}
 
     let (tournament_id1) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
     let (tournament_id2) = create_tournament(cc=(2,2), cd=(-5,8), dc=(8,-5), dd=(-1,-1))
@@ -213,8 +254,8 @@ func test_n_matches{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBui
     local strat_one : felt
     local strat_two : felt
 
-    %{ids.strat_one = deploy_contract("./src/player_strategy_one.cairo").contract_address%}
-    %{ids.strat_two = deploy_contract("./src/player_strategy_two.cairo").contract_address%}
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Defector.cairo").contract_address%}
 
     let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
     
@@ -235,6 +276,60 @@ func test_n_matches{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBui
     let (n_players) = registered_players_len.read(tournament_id)
     let (calc) = calc_n_matches(n_players)
     assert calc = n_matches
+
+    return ()
+end
+
+@external
+func test_FirstPrac_vs_cooperator{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
+    alloc_locals
+    
+    local strat_cooperator : felt
+    local strat_FirstPrac : felt
+
+    %{ids.strat_cooperator = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_FirstPrac = deploy_contract("./src/FirstPrac.cairo").contract_address%}
+
+    let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
+
+    let (player1_id) = register_strategy(tournament_id, strat_cooperator)
+    %{ stop_prank_callable = start_prank(123) %}
+    let (player2_id) = register_strategy(tournament_id, strat_FirstPrac)
+    %{ stop_prank_callable() %}
+
+    play(tournament_id)
+
+    let (score1) = get_player_points(tournament_id, player1_id)
+    assert 20 = score1
+    let (score2) = get_player_points(tournament_id, player2_id)
+    assert 20 = score2
+
+    return ()  
+end
+
+@external
+func test_FirstPrac_vs_defector{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
+    alloc_locals
+    
+    local strat_defector : felt
+    local strat_FirstPrac : felt
+
+    %{ids.strat_defector = deploy_contract("./src/Defector.cairo").contract_address%}
+    %{ids.strat_FirstPrac = deploy_contract("./src/FirstPrac.cairo").contract_address%}
+
+    let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
+
+    let (player1_id) = register_strategy(tournament_id, strat_defector)
+    %{ stop_prank_callable = start_prank(123) %}
+    let (player2_id) = register_strategy(tournament_id, strat_FirstPrac)
+    %{ stop_prank_callable() %}
+
+    play(tournament_id)
+
+    let (score1) = get_player_points(tournament_id, player1_id)
+    assert 2 = score1
+    let (score2) = get_player_points(tournament_id, player2_id)
+    assert -14 = score2
 
     return ()
 end
