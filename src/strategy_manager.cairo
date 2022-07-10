@@ -81,6 +81,10 @@ end
 func matches_len(tournament_id : felt) -> (len : felt):
 end
 
+@storage_var
+func tournament_owner(tournament_id : felt) -> (owner : felt):
+end
+
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
 
@@ -103,6 +107,9 @@ func create_tournament{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
     table.write(tournament_id, DEFECT, DEFECT, dd)
 
     is_active.write(tournament_id, TRUE)
+
+    let (owner) = get_caller_address()
+    tournament_owner.write(tournament_id, owner)
 
     return (tournament_id)
 end
@@ -171,6 +178,13 @@ func play{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     with_attr error_message(
             "The tournament is not active"):
         assert TRUE = b
+    end
+
+    let (owner) = tournament_owner.read(tournament_id)
+    let (caller) = get_caller_address()
+    with_attr error_message(
+            "Only the owner can start the tournament"):
+        assert owner = caller
     end
 
     is_active.write(tournament_id, FALSE)

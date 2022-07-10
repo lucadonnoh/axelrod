@@ -13,3 +13,4 @@ Axelrod implements:
 - matchmaking logic
 - custom tables
 - history of matches
+- access control to start the tournament

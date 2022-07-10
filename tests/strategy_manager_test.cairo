@@ -340,3 +340,28 @@ func calc_n_matches{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBui
     let res = n_players * (n_players - 1) / 2
     return (res)
 end
+
+@external
+func test_failing_call_play_by_not_owner{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}():
+    alloc_locals
+    
+    local strat_one : felt
+    local strat_two : felt
+
+    %{ids.strat_one = deploy_contract("./src/Cooperator.cairo").contract_address%}
+    %{ids.strat_two = deploy_contract("./src/Defector.cairo").contract_address%}
+
+    let (tournament_id) = create_tournament(cc=(2,2), cd=(-3,5), dc=(5,-3), dd=(-1,-1))
+    
+    let (player1_id) = register_strategy(tournament_id, strat_one)
+    %{ stop_prank_callable = start_prank(123) %}
+    let (player2_id) = register_strategy(tournament_id, strat_two)
+    %{ stop_prank_callable() %}
+
+    %{ stop_prank_callable = start_prank(456) %}
+    %{ expect_revert(error_message="Only the owner can start the tournament") %}
+    play(tournament_id)
+    %{ stop_prank_callable() %}
+
+    return ()
+end
