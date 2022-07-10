@@ -15,3 +15,4 @@ Axelrod implements:
 - custom tables
 - history of matches
 - access control to start the tournament
+- template for Finite State Machine strategies 
