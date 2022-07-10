@@ -85,9 +85,13 @@ end
 func tournament_owner(tournament_id : felt) -> (owner : felt):
 end
 
+@storage_var
+func test_strategy() -> (strategy_address : felt):
+end
+
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-
+    # test_strategy.write(69696969)
     return ()
 end
 
@@ -146,6 +150,10 @@ func register_strategy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
             "The tournament is not active"):
         assert TRUE = b
     end
+
+    # test that the provided strategy works
+    # let (test_strategy) = test_strategy.read()
+    # play_vs(-1, test_strategy, test_strategy)
 
     let (caller_address) = get_caller_address()
 

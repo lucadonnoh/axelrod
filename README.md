@@ -10,6 +10,7 @@ The two contracts interact through this interface.
 Axelrod implements:
 - support for multiple tournaments
 - registering
+- check that the strategy works
 - matchmaking logic
 - custom tables
 - history of matches
