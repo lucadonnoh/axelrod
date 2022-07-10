@@ -2,7 +2,8 @@
 
 Axelrod is a contract built with Cairo to create and manage iterated Prisoner's Dilemma tournaments.
 
-![DALLE2-IPD](https://i.imgur.com/5sP5MpO_d.webp?maxwidth=640&shape=thumb&fidelity=medium =400x400)
+
+<img src="https://i.imgur.com/5sP5MpO_d.webp?maxwidth=640&shape=thumb&fidelity=medium" data-canonical-src="https://i.imgur.com/5sP5MpO_d.webp?maxwidth=640&shape=thumb&fidelity=medium" width="200" height="200" />
 
 `strategy_manager` is the contract that contains the logic of the tournaments.
 A user can create a tournament and let players register their strategies.
